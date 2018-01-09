@@ -1,0 +1,48 @@
+type Query {
+    cities(search: String): [City]!
+    countries(search: String): [Country]!
+}
+
+type City {
+    id: Int!
+    name: String
+    district: String
+    population: Int
+    country: Country
+}
+
+type Country {
+    code: String!
+    name: String
+    continent: Continent
+    region: String
+    surfaceArea: Float
+    indepYear: Int
+    population: Int
+    lifeExpectancy: Float
+    gnp: Float
+    cities: [City]
+    capital: City
+    languages: [Language]
+}
+
+type Language {
+    name: String!
+    isOfficial: String
+    percentage: Float,
+    country: Country!
+}
+
+enum Continent {
+    Asia
+    Europe
+    North_America
+    Africa
+    Oceania
+    Antarctica
+    South_America
+}
+
+schema {
+    query: Query
+}

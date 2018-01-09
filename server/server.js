@@ -9,7 +9,4 @@ app.use('/graphql', graphQlExpress({
     graphiql: true
 })).listen(3001);
 
-// app.use(postgraphql('postgres://postgres:password@192.168.99.100:32768/postgres', 'public', { graphiql: true }))
-//     .listen(3001);
-
 console.log('running');
