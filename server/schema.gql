@@ -62,6 +62,15 @@ enum Continent {
     South_America
 }
 
+type PopulationUpdate {
+    population: Int
+}
+
+type Subscription {
+    populationUpdated: PopulationUpdate
+}
+
 schema {
     query: Query
+    subscription: Subscription
 }
