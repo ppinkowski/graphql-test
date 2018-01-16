@@ -11,6 +11,11 @@ type City {
     country: Country
 }
 
+input DateFilter {
+    start: String
+    end: String
+}
+
 type Country {
     code: String!
     name: String
@@ -24,6 +29,20 @@ type Country {
     cities: [City]
     capital: City
     languages: [Language]
+    gdpValues(period: DateFilter, rollup: RollupPeriod): [GdpValue]
+}
+
+enum RollupPeriod {
+    Day,
+    Week,
+    Month,
+    Year
+}
+
+type GdpValue {
+    value: Float
+    date: String
+    country: Country
 }
 
 type Language {
