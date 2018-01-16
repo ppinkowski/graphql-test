@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import Results from './Results';
 import { connect } from 'react-redux';
-import { setSearchTerm } from './store/search';
+import { setSearchTerm } from '../store/search';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
-import { cityFragment } from './QueryFragments';
+import { cityFragment } from '../queries/QueryFragments';
 
 const query = gql`
     query($search: String) {

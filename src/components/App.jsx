@@ -7,7 +7,7 @@ import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Search from './Search';
 import Analytics from './Analytics';
-import store from './store/store';
+import store from '../store/store';
 
 const apolloClient = new ApolloClient({
   link: new HttpLink({ uri: '/graphql' }),
