@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Analytics = ({}) => (
+const Analytics = () => (
     <div>
         <h2>Analytics!</h2>
     </div>

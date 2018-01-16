@@ -1,25 +1,60 @@
-import { makeExecutableSchema } from 'graphql-tools';
-import joinMonsterAdapt from 'join-monster-graphql-tools-adapter';
-import joinMonster from 'join-monster';
-import runQuery from './db';
-import fs from 'fs';
-import { PubSub, withFilter } from 'graphql-subscriptions';
+'use strict';
+
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+
+var http = require('http');
+var express = _interopDefault(require('../node_modules/express/index.js'));
+var graphQlExpress = _interopDefault(require('../node_modules/express-graphql/dist/index.js'));
+var index_js = require('../node_modules/graphql-server-express/dist/index.js');
+var index_js$1 = require('../node_modules/graphql-tools/dist/index.js');
+var joinMonsterAdapt = _interopDefault(require('../node_modules/join-monster-graphql-tools-adapter/src/index.js'));
+var joinMonster = _interopDefault(require('../node_modules/join-monster/dist/index.js'));
+var index_js$2 = require('../node_modules/pg/lib/index.js');
+var nodeCleanup = _interopDefault(require('../node_modules/node-cleanup/node-cleanup.js'));
+var fs = _interopDefault(require('fs'));
+var index_js$3 = require('../node_modules/graphql-subscriptions/dist/index.js');
+var index_js$4 = require('../node_modules/subscriptions-transport-ws/dist/index.js');
+var index_js$5 = require('../node_modules/graphql/index.js');
+
+let pgClient;
+
+nodeCleanup(() => {
+    if (pgClient) {
+        pgClient.end();
+    }
+});
+
+const getPgClient = async () => {
+    if (!pgClient) {
+        pgClient = new index_js$2.Client({ connectionString: 'postgres://postgres:password@192.168.99.100:32791/postgres' });
+        await pgClient.connect();
+    }
+    return pgClient;
+};
+
+const executeQuery = async (sql) => {
+    console.log(sql);
+    const client = await getPgClient();
+    const result = await client.query(sql);
+    return result;
+};
+
 const typeDefs = fs.readFileSync(require.resolve('./schema.gql')).toString();
 
-const pubsub = new PubSub();
+const pubsub = new index_js$3.PubSub();
 
 const resolvers = {
     Query: {
         cities(root, args, context, info) {
-            return joinMonster(info, context, runQuery, { dialect: 'pg' })
+            return joinMonster(info, context, executeQuery, { dialect: 'pg' })
         },
         countries(root, args, context, info) {
-            return joinMonster(info, context, runQuery, { dialect: 'pg' })
+            return joinMonster(info, context, executeQuery, { dialect: 'pg' })
         }
     },
     Subscription: {
         populationUpdated: {
-            subscribe: withFilter(
+            subscribe: index_js$3.withFilter(
                 () => pubsub.asyncIterator('popchanged'),
                 (payload, variables) => payload.populationUpdated && payload.populationUpdated.countryCode === variables.countryCode
             )
@@ -33,17 +68,17 @@ const resolvers = {
                 WHERE code = '${args.input.countryCode}'
                 RETURNING code as "countryCode", population
             `;
-            const result = await runQuery(sql);
+            const result = await executeQuery(sql);
             if (result.rowCount > 0) {
                 const [ update ] = result.rows;
-                pubsub.publish('popchanged', { populationUpdated: update })
+                pubsub.publish('popchanged', { populationUpdated: update });
                 return update;
             }
         }
     }
 };
 
-export const schema = makeExecutableSchema({
+const schema = index_js$1.makeExecutableSchema({
     typeDefs,
     resolvers
 });
@@ -77,7 +112,7 @@ const getGroupExpressions = (rollup) => {
             break;
     }
     return { fields, groupExpr };
-}
+};
 
 joinMonsterAdapt(schema, {
     Query: {
@@ -203,9 +238,29 @@ joinMonsterAdapt(schema, {
     }
 });
 
-export const runUpdates = () => {
-    const update = { populationUpdated: { population: Math.round(Math.random() * 1000), countryCode: (Math.random() > 0.5) ? "UK": "USA" } };
-    // console.log(update);
-    pubsub.publish('popchanged', update);
-    setTimeout(runUpdates, 1000);
-}
+const app = express();
+
+app.use('/graphql', graphQlExpress({
+    schema: schema
+}));
+
+app.use('/graphiql', index_js.graphiqlExpress({
+    endpointURL: "http://localhost:3001/graphql",
+    subscriptionsEndpoint: "ws://localhost:3001/graphqls"
+}));
+
+const websocketServer = http.createServer(app);
+
+new index_js$4.SubscriptionServer({
+        schema,
+        execute: index_js$5.execute,
+        subscribe: index_js$5.subscribe,
+    }, {
+        server: websocketServer,
+        path: '/graphqls',
+    }
+);
+
+websocketServer.listen(3001);
+
+console.log('running');

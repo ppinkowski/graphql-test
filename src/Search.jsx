@@ -29,12 +29,19 @@ class Search extends Component {
 
     render() {
         return (
-            <div>
-                <input ref={(e) => this.input = e} onChange={this.searchUpdated} value={this.state.search}/>
-                <button onClick={() => this.setState({committedSearch: this.state.search})}>Search</button>
-                <Results search={this.state.committedSearch}/>
+            <div className="Search">
+                <form onSubmit={this.submitSearch}>
+                    <input ref={(e) => this.input = e} onChange={this.searchUpdated} value={this.state.search}/>
+                    <button>Search</button>
+                    <Results cities={this.props.data && this.props.data.cities}/>
+                </form>
             </div>
         )
+    }
+
+    submitSearch = (e) => {
+        e.preventDefault();
+        this.props.setSearchTerm(this.state.search);
     }
 
     searchUpdated = () => {
@@ -51,7 +58,11 @@ const mapDispatchToProps = {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-    graphql(query, { skip: (props) => !props.searchTerm })(
-        Search
-    )
+    graphql(
+        query,
+        {
+            skip: (props) => !props.searchTerm,
+            options: (props) => ({ variables: { search: props.searchTerm }})
+        }
+    )(Search)
 );

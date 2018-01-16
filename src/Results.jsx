@@ -1,8 +1,8 @@
 import React from 'react';
 
-const Results = ({ data }) => (
+const Results = ({ cities }) => (
     <div>
-        {data && data.cities && data.cities.map(c => (
+        {cities && cities.map(c => (
             <div key={c.id}>
                 <h2>{c.name} - {c.country.name}</h2>
                 <span>{c.population}</span>

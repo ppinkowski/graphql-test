@@ -1,18 +1,17 @@
-import { createActionCreator } from "./utils";
-
-const SET_SEARCH_TERM = 'SET_SEARCH_TERM';
+import { createReducer } from './reduxUtils';
 
 const defaultState = {
-    searchTerm: ''
+    searchTerm: '',
+    selectedCountry: null
 };
 
-export const setSearchTerm = createActionCreator(SET_SEARCH_TERM);
+export const [
+    reducer,
+    setSearchTerm,
+    setSelectedCountry
+] = createReducer({
+    'SET_SEARCH_TERM': (state, payload) => ({ ...state, searchTerm: payload }),
+    'SET_SELECTED_COUNTRY': (state, payload) => ({ ...state, selectedCountry: payload })
+}, defaultState);
 
-export default (state = defaultState, action) => {
-    switch (action.type) {
-        case SET_SEARCH_TERM:
-            return { ...state, searchTerm: action.payload };
-        default:
-            return state;
-    }
-};
+export default reducer;

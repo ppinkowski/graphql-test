@@ -63,14 +63,36 @@ enum Continent {
 }
 
 type PopulationUpdate {
-    population: Int
+    countryCode: String!
+    population: Int!
 }
 
 type Subscription {
-    populationUpdated: PopulationUpdate
+    populationUpdated(countryCode: String!): PopulationUpdate
+}
+
+enum UpdatePopulationType {
+    Add,
+    Remove
+}
+
+input UpdatePopulationInput {
+    countryCode: String!
+    value: Int!
+    type: UpdatePopulationType!
+}
+
+type UpdatePopulationPayload {
+    countryCode: String!
+    population: Int!
+}
+
+type Mutation {
+    updatePopulation(input: UpdatePopulationInput!): UpdatePopulationPayload
 }
 
 schema {
     query: Query
     subscription: Subscription
+    mutation: Mutation
 }

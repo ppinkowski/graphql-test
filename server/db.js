@@ -1,5 +1,5 @@
-const { Client } = require('pg');
-var nodeCleanup = require('node-cleanup');
+import { Client } from 'pg';
+import nodeCleanup from 'node-cleanup';
 
 let pgClient;
 
@@ -24,4 +24,4 @@ const executeQuery = async (sql) => {
     return result;
 }
 
-module.exports = executeQuery;
+export default executeQuery;
