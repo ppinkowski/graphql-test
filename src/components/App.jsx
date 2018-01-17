@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { ApolloClient } from 'apollo-client';
+import { split } from 'apollo-link';
 import { HttpLink } from 'apollo-link-http';
+import { WebSocketLink } from 'apollo-link-ws';
+import { getMainDefinition } from 'apollo-utilities';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { ApolloProvider } from 'react-apollo';
 import { Provider } from 'react-redux';
@@ -10,19 +13,23 @@ import Analytics from './Analytics';
 import store from '../store/store';
 
 export const dataIdFromObject = (o) => {
-  let id = o.id;
-  switch(o.__typename) {
-    case 'Country':
-      id = o.code;
-      break;
-    default:
-      break;
-  }
-  return `${o.__typename}:${id}`;
+  return `${o.__typename}:${o.code || o.id}`;
 }
 
+const httpLink = new HttpLink({
+  uri: '/graphql'
+});
+const wsLink = new WebSocketLink({
+  uri: 'ws://localhost:3001/graphqls',
+  options: { reconnect: true }
+});
+const link = split(({query}) => {
+    const { kind, operation } = getMainDefinition(query);
+    return kind === 'OperationDefinition' && operation === 'subscription';
+}, wsLink, httpLink);
+
 const apolloClient = new ApolloClient({
-  link: new HttpLink({ uri: '/graphql' }),
+  link,
   cache: new InMemoryCache({
     dataIdFromObject
   })
