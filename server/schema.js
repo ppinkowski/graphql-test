@@ -21,7 +21,7 @@ const resolvers = {
         populationUpdated: {
             subscribe: withFilter(
                 () => pubsub.asyncIterator('popchanged'),
-                (payload, variables) => payload.populationUpdated && payload.populationUpdated.countryCode === variables.countryCode
+                (payload, variables) => payload.populationUpdated && payload.populationUpdated.code === variables.code
             )
         }
     },
@@ -30,8 +30,8 @@ const resolvers = {
             const sql = `
                 UPDATE country
                 SET population = country.population ${(args.input.type === 'Add') ? '+' : '-'} ${args.input.value}
-                WHERE code = '${args.input.countryCode}'
-                RETURNING code as "countryCode", population
+                WHERE code = '${args.input.code}'
+                RETURNING code, population
             `;
             const result = await runQuery(sql);
             if (result.rowCount > 0) {
@@ -202,10 +202,3 @@ joinMonsterAdapt(schema, {
         }
     }
 });
-
-export const runUpdates = () => {
-    const update = { populationUpdated: { population: Math.round(Math.random() * 1000), countryCode: (Math.random() > 0.5) ? "UK": "USA" } };
-    // console.log(update);
-    pubsub.publish('popchanged', update);
-    setTimeout(runUpdates, 1000);
-}

@@ -1,0 +1,19 @@
+.Results {
+
+    height: calc(100% - 50px);
+    overflow-y: auto;
+
+    > div {
+        cursor: pointer;
+        padding: 10px;
+        &:hover {
+            background: #e5e5e5;
+        }
+        &:not(:first-child) {
+            border-top: 1px solid #e5e5e5;
+        }
+        h2 {
+            margin: 0;
+        }
+    }
+}

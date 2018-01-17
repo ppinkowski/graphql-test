@@ -2,18 +2,18 @@ import { createReducer } from './reduxUtils';
 
 const defaultState = {
     searchTerm: '',
-    selectedCountry: null
+    selectedCountryCode: null
 };
 
 const reducerFunctions = {
     'SET_SEARCH_TERM': (state, payload) => ({ ...state, searchTerm: payload }),
-    'SET_SELECTED_COUNTRY': (state, payload) => ({ ...state, selectedCountry: payload })
+    'SET_SELECTED_COUNTRY': (state, payload) => ({ ...state, selectedCountryCode: payload })
 };
 
 export const [
     reducer,
     setSearchTerm,
-    setSelectedCountry
+    setSelectedCountryCode
 ] = createReducer(reducerFunctions, defaultState);
 
 export default reducer;

@@ -1,0 +1,30 @@
+.Search {
+
+    height: 100vh;
+    display: flex;
+
+    > * {
+        flex: 1;
+    }
+
+    >:first-child {
+        border-right: 1px solid #e4e4e4;
+        padding: 10px 0 0 0;
+    }
+
+    .SearchBox {
+        height: 50px;
+        border: none;
+        padding-left: 10px;
+        font-size: 20px;
+        width: calc(100% - 100px);
+        margin-left: 20px;
+        &:focus {
+            outline: none;
+        }
+        & + button {
+            width: 60px;
+            display: inline-block;
+        }
+    }
+}

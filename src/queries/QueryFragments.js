@@ -10,3 +10,11 @@ export const cityFragment = gql`
         }
     }
 `;
+
+export const countryFragment = gql`
+    fragment CountryData on Country {
+        code
+        name
+        population
+    }
+`;

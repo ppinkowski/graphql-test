@@ -56,7 +56,7 @@ const resolvers = {
         populationUpdated: {
             subscribe: index_js$3.withFilter(
                 () => pubsub.asyncIterator('popchanged'),
-                (payload, variables) => payload.populationUpdated && payload.populationUpdated.countryCode === variables.countryCode
+                (payload, variables) => payload.populationUpdated && payload.populationUpdated.code === variables.code
             )
         }
     },
@@ -65,8 +65,8 @@ const resolvers = {
             const sql = `
                 UPDATE country
                 SET population = country.population ${(args.input.type === 'Add') ? '+' : '-'} ${args.input.value}
-                WHERE code = '${args.input.countryCode}'
-                RETURNING code as "countryCode", population
+                WHERE code = '${args.input.code}'
+                RETURNING code, population
             `;
             const result = await executeQuery(sql);
             if (result.rowCount > 0) {

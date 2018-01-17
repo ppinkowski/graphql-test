@@ -63,12 +63,12 @@ enum Continent {
 }
 
 type PopulationUpdate {
-    countryCode: String!
+    code: String!
     population: Int!
 }
 
 type Subscription {
-    populationUpdated(countryCode: String!): PopulationUpdate
+    populationUpdated(code: String!): PopulationUpdate
 }
 
 enum UpdatePopulationType {
@@ -77,18 +77,13 @@ enum UpdatePopulationType {
 }
 
 input UpdatePopulationInput {
-    countryCode: String!
+    code: String!
     value: Int!
     type: UpdatePopulationType!
 }
 
-type UpdatePopulationPayload {
-    countryCode: String!
-    population: Int!
-}
-
 type Mutation {
-    updatePopulation(input: UpdatePopulationInput!): UpdatePopulationPayload
+    updatePopulation(input: UpdatePopulationInput!): Country
 }
 
 schema {

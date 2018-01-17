@@ -18,6 +18,7 @@
     "join-monster": "^2.0.15",
     "join-monster-graphql-tools-adapter": "0.0.2",
     "node-cleanup": "^2.1.2",
+    "node-sass-chokidar": "0.0.3",
     "pg": "^7.4.1",
     "react": "^16.2.0",
     "react-apollo": "^2.0.4",
@@ -32,8 +33,10 @@
     "subscriptions-transport-ws": "^0.9.5"
   },
   "scripts": {
-    "start": "concurrently \"react-scripts start\" \"node server\\bundle.js\"",
+    "start": "concurrently \"npm run watch:css\" \"react-scripts start\" \"node server\\bundle.js\"",
     "build": "react-scripts build",
+    "build:css": "node-sass-chokidar ./src -o src/",
+    "watch:css": "npm run build:css && node-sass-chokidar ./src -o src/ --watch --recursive",
     "build:server": "rollup -c server/rollup.config.js",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"

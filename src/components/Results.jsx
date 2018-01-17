@@ -1,11 +1,12 @@
 import React from 'react';
 
-const Results = ({ cities }) => (
-    <div>
-        {cities && cities.map(c => (
-            <div key={c.id}>
-                <h2>{c.name} - {c.country.name}</h2>
-                <span>{c.population}</span>
+import './Results.css';
+
+const Results = ({ countries, selectCountry }) => (
+    <div className="Results">
+        {countries && countries.slice().sort().map(c => (
+            <div key={c.code} onClick={() => selectCountry(c.code)}>
+                {c.name}
             </div>
         ))}
     </div>

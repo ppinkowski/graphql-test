@@ -9,9 +9,23 @@ import Search from './Search';
 import Analytics from './Analytics';
 import store from '../store/store';
 
+export const dataIdFromObject = (o) => {
+  let id = o.id;
+  switch(o.__typename) {
+    case 'Country':
+      id = o.code;
+      break;
+    default:
+      break;
+  }
+  return `${o.__typename}:${id}`;
+}
+
 const apolloClient = new ApolloClient({
   link: new HttpLink({ uri: '/graphql' }),
-  cache: new InMemoryCache()
+  cache: new InMemoryCache({
+    dataIdFromObject
+  })
 });
 
 class App extends Component {

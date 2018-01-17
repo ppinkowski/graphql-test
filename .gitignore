@@ -16,3 +16,4 @@ npm-debug.log*
 .idea
 .vscode
 mock_server/data/mockUpdates.json
+src/**/*.css
